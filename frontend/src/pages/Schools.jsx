@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import SchoolForm from '../components/SchoolForm';
-import SchoolClasses from '../components/SchoolClasses';
 
 const Schools = () => {
   // Estado para gerenciar as escolas
@@ -86,9 +85,6 @@ const Schools = () => {
                     </button>
                   </div>
                 </div>
-                
-                {/* Componente de turmas para cada escola */}
-                <SchoolClasses schoolId={school.id} />
               </div>
             ))}
           </div>

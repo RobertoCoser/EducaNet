@@ -1,5 +1,4 @@
-const StudentForm = ({ 
-  turmas, 
+const SchoolForm = ({ 
   initialData, 
   onSubmit, 
   onDelete, 
@@ -13,47 +12,15 @@ const StudentForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form-container">
       <div className="form-group">
-        <label>Nome Completo*</label>
-        <input
-          {...register('nome', { required: 'Campo obrigatório' })}
-        />
+        <label>Nome da Escola:</label>
+        <input {...register('name', { required: true })} />
       </div>
-
+      
       <div className="form-group">
-        <label>Data de Nascimento*</label>
-        <input
-          type="date"
-          {...register('nascimento', { required: 'Campo obrigatório' })}
-        />
+        <label>Endereço:</label>
+        <input {...register('address', { required: true })} />
       </div>
-
-      <div className="form-group">
-        <label>CPF*</label>
-        <input
-          {...register('cpf', { 
-            required: 'Campo obrigatório',
-            pattern: {
-              value: /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/,
-              message: 'Formato inválido (XXX.XXX.XXX-XX)'
-            }
-          })}
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Turma*</label>
-        <select
-          {...register('turmaId', { required: 'Selecione uma turma' })}
-        >
-          <option value="">Selecione uma turma...</option>
-          {turmas.map(turma => (
-            <option key={turma.id} value={turma.id}>
-              {turma.nome} - {turma.escolaNome}
-            </option>
-          ))}
-        </select>
-      </div>
-
+      
       <div className="form-actions">
         {isEditing && (
           <button 
@@ -61,7 +28,7 @@ const StudentForm = ({
             className="btn-form btn-danger"
             onClick={onDelete}
           >
-            Excluir Aluno
+            Excluir Escola
           </button>
         )}
         
@@ -80,9 +47,11 @@ const StudentForm = ({
           type="submit" 
           className="btn-form btn-form-primary"
         >
-          {isEditing ? 'Atualizar Aluno' : 'Matricular Aluno'}
+          {isEditing ? 'Atualizar Escola' : 'Cadastrar Escola'}
         </button>
       </div>
     </form>
   );
 };
+
+export default SchoolForm;

@@ -59,3 +59,5 @@ const StudentForm = ({ turmas, onSubmit }) => {
     </form>
   );
 };
+
+export default StudentForm;
