@@ -69,123 +69,139 @@ const Schools = () => {
 
   return (
     <div className="page-container">
-      <h1 className="page-title">Escolas</h1>
-
-      {/* Formulário Inline */}
-      <div className="inline-form">
-        <div className="inline-form-header">
-          <h2 className="inline-form-title">
-            {currentSchool ? 'Editar Escola' : 'Adicionar Nova Escola'}
-          </h2>
-          <button 
-            className={`inline-form-toggle ${showForm ? 'active' : ''}`}
-            onClick={() => {
-              if (showForm) resetForm();
-              else setShowForm(true);
-            }}
-          >
-            {currentSchool ? 'Cancelar Edição' : showForm ? 'Cancelar' : 'Adicionar Escola'}
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
-
-        <form 
-          className={`inline-form-content ${showForm ? 'active' : ''}`}
-          onSubmit={handleSubmit}
+      <div className="page-header">
+        <h1 className="page-title">Escolas</h1>
+        <button 
+          className={`btn ${showForm ? 'btn-secondary' : 'btn-primary'}`}
+          onClick={() => {
+            if (showForm) resetForm();
+            else setShowForm(true);
+          }}
         >
-          <div className="compact-form-group">
-            <label htmlFor="name">Nome da Escola*</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="compact-form-group">
-            <label htmlFor="address">Endereço*</label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="compact-form-group">
-            <label htmlFor="phone">Telefone*</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-actions-compact">
-            <button 
-              type="button" 
-              className="btn-compact btn-form-secondary"
-              onClick={resetForm}
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              className="btn-compact btn-form-primary"
-            >
-              {currentSchool ? 'Atualizar Escola' : 'Salvar Escola'}
-            </button>
-            {currentSchool && (
-              <button 
-                type="button"
-                className="btn-compact btn-form-danger"
-                onClick={() => handleDelete(currentSchool.id)}
-              >
-                Excluir Escola
-              </button>
-            )}
-          </div>
-        </form>
+          {showForm ? 'Cancelar' : currentSchool ? 'Cancelar Edição' : 'Adicionar Escola'}
+        </button>
       </div>
 
+      {/* Formulário Inline */}
+      {showForm && (
+        <div className="card form-card">
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Nome da Escola*</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Endereço*</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Telefone*</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-footer">
+              {currentSchool && (
+                <button 
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(currentSchool.id)}
+                >
+                  Excluir Escola
+                </button>
+              )}
+              <div className="form-footer-right">
+                <button 
+                  type="button" 
+                  className="btn btn-outline"
+                  onClick={resetForm}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                >
+                  {currentSchool ? 'Atualizar' : 'Salvar'}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Lista de escolas cadastradas */}
-      <div className="items-list mt-8">
+      <div className="section">
         <h2 className="section-title">Escolas Cadastradas</h2>
         
         {schools.length === 0 ? (
-          <p className="text-gray-500">Nenhuma escola cadastrada ainda.</p>
+          <div className="empty-state">
+            <p>Nenhuma escola cadastrada ainda.</p>
+            <button 
+              className="btn btn-primary"
+              onClick={() => setShowForm(true)}
+            >
+              Adicionar Escola
+            </button>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="cards-grid">
             {schools.map(school => (
-              <div key={school.id} className="item-card">
-                <div className="item-card-body">
+              <div key={school.id} className="card school-card">
+                <div className="card-content">
                   <h3>{school.name}</h3>
-                  <p className="text-gray-600">{school.address}</p>
-                  <p className="text-gray-600">{school.phone}</p>
-                  <div className="item-actions">
-                    <button
-                      onClick={() => handleEdit(school)}
-                      className="btn-form btn-edit btn-sm"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(school.id)}
-                      className="btn-form btn-danger btn-sm"
-                    >
-                      Excluir
-                    </button>
+                  <div className="card-details">
+                    <p><span className="detail-label">Endereço:</span> {school.address}</p>
+                    <p><span className="detail-label">Telefone:</span> {school.phone}</p>
                   </div>
+                </div>
+                <div className="card-actions">
+                  <button
+                    onClick={() => handleEdit(school)}
+                    className="btn-action btn-edit"
+                    aria-label="Editar"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" strokeWidth="2"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" strokeWidth="2"/>
+                    </svg>
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(school.id)}
+                    className="btn-action btn-delete"
+                    aria-label="Excluir"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M3 6h18" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" strokeWidth="2"/>
+                    </svg>
+                    Excluir
+                  </button>
                 </div>
               </div>
             ))}

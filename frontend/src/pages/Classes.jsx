@@ -12,7 +12,7 @@ const Classes = () => {
     { id: 2, nome: "2º Ano B", ano: 2, escolaId: 2, escolaNome: "Colégio Estadual B" }
   ]);
   
-  // Estados para o formulário inline
+  // Estados para o formulário
   const [showForm, setShowForm] = useState(false);
   const [currentTurma, setCurrentTurma] = useState(null);
   const [formData, setFormData] = useState({
@@ -21,13 +21,11 @@ const Classes = () => {
     escolaId: ''
   });
 
-  // Manipulador de mudanças no formulário
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Manipulador para submit do formulário
   const handleSubmit = (e) => {
     e.preventDefault();
     
@@ -38,19 +36,16 @@ const Classes = () => {
     };
 
     if (currentTurma) {
-      // Atualiza turma existente
       setTurmas(turmas.map(t => 
         t.id === currentTurma.id ? { ...t, ...turmaData } : t
       ));
     } else {
-      // Adiciona nova turma
       setTurmas([...turmas, { ...turmaData, id: Date.now() }]);
     }
     
     resetForm();
   };
 
-  // Prepara o formulário para edição
   const handleEdit = (turma) => {
     setCurrentTurma(turma);
     setFormData({
@@ -61,13 +56,11 @@ const Classes = () => {
     setShowForm(true);
   };
 
-  // Manipulador para deletar turma
   const handleDelete = (id) => {
     setTurmas(turmas.filter(t => t.id !== id));
     if (currentTurma?.id === id) resetForm();
   };
 
-  // Reseta o formulário
   const resetForm = () => {
     setShowForm(false);
     setCurrentTurma(null);
@@ -80,132 +73,148 @@ const Classes = () => {
 
   return (
     <div className="page-container">
-      <h1 className="page-title">Turmas</h1>
-
-      {/* Formulário Inline */}
-      <div className="inline-form">
-        <div className="inline-form-header">
-          <h2 className="inline-form-title">
-            {currentTurma ? 'Editar Turma' : 'Adicionar Nova Turma'}
-          </h2>
-          <button 
-            className={`inline-form-toggle ${showForm ? 'active' : ''}`}
-            onClick={() => {
-              if (showForm) resetForm();
-              else setShowForm(true);
-            }}
-          >
-            {currentTurma ? 'Cancelar Edição' : showForm ? 'Cancelar' : 'Adicionar Turma'}
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
-
-        <form 
-          className={`inline-form-content ${showForm ? 'active' : ''}`}
-          onSubmit={handleSubmit}
+      <div className="page-header">
+        <h1 className="page-title">Turmas</h1>
+        <button 
+          className={`btn ${showForm ? 'btn-secondary' : 'btn-primary'}`}
+          onClick={() => {
+            if (showForm) resetForm();
+            else setShowForm(true);
+          }}
         >
-          <div className="compact-form-group">
-            <label htmlFor="nome">Nome da Turma*</label>
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              required
-              placeholder="Ex: 3º Ano A"
-            />
-          </div>
-
-          <div className="compact-form-group">
-            <label htmlFor="ano">Ano*</label>
-            <select
-              id="ano"
-              name="ano"
-              value={formData.ano}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Selecione o ano</option>
-              {[1, 2, 3, 4, 5].map(ano => (
-                <option key={ano} value={ano}>{ano}º Ano</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="compact-form-group">
-            <label htmlFor="escolaId">Escola*</label>
-            <select
-              id="escolaId"
-              name="escolaId"
-              value={formData.escolaId}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Selecione a escola</option>
-              {escolas.map(escola => (
-                <option key={escola.id} value={escola.id}>{escola.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-actions-compact">
-            <button 
-              type="button" 
-              className="btn-compact btn-form-secondary"
-              onClick={resetForm}
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              className="btn-compact btn-form-primary"
-            >
-              {currentTurma ? 'Atualizar Turma' : 'Salvar Turma'}
-            </button>
-            {currentTurma && (
-              <button 
-                type="button"
-                className="btn-compact btn-form-danger"
-                onClick={() => handleDelete(currentTurma.id)}
-              >
-                Excluir Turma
-              </button>
-            )}
-          </div>
-        </form>
+          {showForm ? 'Cancelar' : currentTurma ? 'Cancelar Edição' : 'Adicionar Turma'}
+        </button>
       </div>
 
+      {/* Formulário */}
+      {showForm && (
+        <div className="card form-card">
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Nome da Turma*</label>
+                <input
+                  type="text"
+                  name="nome"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="Ex: 3º Ano A"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Ano*</label>
+                <select
+                  name="ano"
+                  value={formData.ano}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                >
+                  <option value="">Selecione o ano</option>
+                  {[1, 2, 3, 4, 5].map(ano => (
+                    <option key={ano} value={ano}>{ano}º Ano</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Escola*</label>
+                <select
+                  name="escolaId"
+                  value={formData.escolaId}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                >
+                  <option value="">Selecione a escola</option>
+                  {escolas.map(escola => (
+                    <option key={escola.id} value={escola.id}>{escola.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-footer">
+              {currentTurma && (
+                <button 
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(currentTurma.id)}
+                >
+                  Excluir Turma
+                </button>
+              )}
+              <div className="form-footer-right">
+                <button 
+                  type="button" 
+                  className="btn btn-outline"
+                  onClick={resetForm}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                >
+                  {currentTurma ? 'Atualizar' : 'Salvar'}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Lista de turmas cadastradas */}
-      <div className="items-list mt-8">
+      <div className="section">
         <h2 className="section-title">Turmas Cadastradas</h2>
         
         {turmas.length === 0 ? (
-          <p className="text-gray-500">Nenhuma turma cadastrada ainda.</p>
+          <div className="empty-state">
+            <p>Nenhuma turma cadastrada ainda.</p>
+            <button 
+              className="btn btn-primary"
+              onClick={() => setShowForm(true)}
+            >
+              Adicionar Turma
+            </button>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="cards-grid">
             {turmas.map(turma => (
-              <div key={turma.id} className="item-card">
-                <div className="item-card-body">
+              <div key={turma.id} className="card school-card">
+                <div className="card-content">
                   <h3>{turma.nome}</h3>
-                  <p className="text-gray-600">Ano: {turma.ano}º</p>
-                  <p className="text-gray-600">Escola: {turma.escolaNome}</p>
-                  <div className="item-actions">
-                    <button
-                      onClick={() => handleEdit(turma)}
-                      className="btn-form btn-edit btn-sm"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(turma.id)}
-                      className="btn-form btn-danger btn-sm"
-                    >
-                      Excluir
-                    </button>
+                  <div className="card-details">
+                    <p><span className="detail-label">Ano:</span> {turma.ano}º</p>
+                    <p><span className="detail-label">Escola:</span> {turma.escolaNome}</p>
                   </div>
+                </div>
+                <div className="card-actions">
+                  <button
+                    onClick={() => handleEdit(turma)}
+                    className="btn-action btn-edit"
+                    aria-label="Editar"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" strokeWidth="2"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" strokeWidth="2"/>
+                    </svg>
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(turma.id)}
+                    className="btn-action btn-delete"
+                    aria-label="Excluir"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M3 6h18" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" strokeWidth="2"/>
+                    </svg>
+                    Excluir
+                  </button>
                 </div>
               </div>
             ))}

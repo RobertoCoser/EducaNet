@@ -12,13 +12,13 @@ const Students = () => {
       id: 1, 
       nome: "Ana Silva", 
       nascimento: "2010-05-15", 
-      cpf: "123.456.789-00", 
+      cpf: "12345678900", 
       turmaId: 1,
       turmaNome: "3º Ano A"
     }
   ]);
   
-  // Estados para o formulário inline
+  // Estados para o formulário
   const [showForm, setShowForm] = useState(false);
   const [currentAluno, setCurrentAluno] = useState(null);
   const [formData, setFormData] = useState({
@@ -30,6 +30,7 @@ const Students = () => {
 
   // Formata CPF
   const formatCPF = (cpf) => {
+    if (!cpf) return '';
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   };
 
@@ -37,7 +38,6 @@ const Students = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Formatação do CPF enquanto digita
     if (name === 'cpf') {
       const cleanedValue = value.replace(/\D/g, '');
       let formattedValue = cleanedValue;
@@ -70,12 +70,10 @@ const Students = () => {
     };
 
     if (currentAluno) {
-      // Atualiza aluno existente
       setAlunos(alunos.map(a => 
         a.id === currentAluno.id ? { ...a, ...alunoData } : a
       ));
     } else {
-      // Adiciona novo aluno
       setAlunos([...alunos, { ...alunoData, id: Date.now() }]);
     }
     
@@ -114,124 +112,130 @@ const Students = () => {
 
   return (
     <div className="page-container">
-      <h1 className="page-title">Alunos</h1>
-
-      {/* Formulário Inline */}
-      <div className="inline-form">
-        <div className="inline-form-header">
-          <h2 className="inline-form-title">
-            {currentAluno ? 'Editar Aluno' : 'Adicionar Novo Aluno'}
-          </h2>
-          <button 
-            className={`inline-form-toggle ${showForm ? 'active' : ''}`}
-            onClick={() => {
-              if (showForm) resetForm();
-              else setShowForm(true);
-            }}
-          >
-            {currentAluno ? 'Cancelar Edição' : showForm ? 'Cancelar' : 'Adicionar Aluno'}
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
-
-        <form 
-          className={`inline-form-content ${showForm ? 'active' : ''}`}
-          onSubmit={handleSubmit}
+      <div className="page-header">
+        <h1 className="page-title">Alunos</h1>
+        <button 
+          className={`btn ${showForm ? 'btn-secondary' : 'btn-primary'}`}
+          onClick={() => {
+            if (showForm) resetForm();
+            else setShowForm(true);
+          }}
         >
-          <div className="compact-form-group">
-            <label htmlFor="nome">Nome Completo*</label>
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              required
-              placeholder="Ex: João da Silva"
-            />
-          </div>
-
-          <div className="compact-form-group">
-            <label htmlFor="cpf">CPF*</label>
-            <input
-              type="text"
-              id="cpf"
-              name="cpf"
-              value={formData.cpf}
-              onChange={handleChange}
-              required
-              placeholder="000.000.000-00"
-              maxLength="14"
-            />
-          </div>
-
-          <div className="compact-form-group">
-            <label htmlFor="nascimento">Data de Nascimento*</label>
-            <input
-              type="date"
-              id="nascimento"
-              name="nascimento"
-              value={formData.nascimento}
-              onChange={handleChange}
-              required
-              max={new Date().toISOString().split('T')[0]}
-            />
-          </div>
-
-          <div className="compact-form-group">
-            <label htmlFor="turmaId">Turma*</label>
-            <select
-              id="turmaId"
-              name="turmaId"
-              value={formData.turmaId}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Selecione a turma</option>
-              {turmas.map(turma => (
-                <option key={turma.id} value={turma.id}>{turma.nome} - {turma.escolaNome}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-actions-compact">
-            <button 
-              type="button" 
-              className="btn-compact btn-form-secondary"
-              onClick={resetForm}
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              className="btn-compact btn-form-primary"
-            >
-              {currentAluno ? 'Atualizar Aluno' : 'Salvar Aluno'}
-            </button>
-            {currentAluno && (
-              <button 
-                type="button"
-                className="btn-compact btn-form-danger"
-                onClick={() => handleDelete(currentAluno.id)}
-              >
-                Excluir Aluno
-              </button>
-            )}
-          </div>
-        </form>
+          {showForm ? 'Cancelar' : currentAluno ? 'Cancelar Edição' : 'Adicionar Aluno'}
+        </button>
       </div>
 
-      {/* Tabela de alunos cadastrados */}
-      <div className="items-list mt-8">
+      {/* Formulário */}
+      {showForm && (
+        <div className="card form-card">
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Nome Completo*</label>
+                <input
+                  type="text"
+                  name="nome"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="Ex: João da Silva"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">CPF*</label>
+                <input
+                  type="text"
+                  name="cpf"
+                  value={formData.cpf}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="000.000.000-00"
+                  maxLength="14"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Data de Nascimento*</label>
+                <input
+                  type="date"
+                  name="nascimento"
+                  value={formData.nascimento}
+                  onChange={handleChange}
+                  className="form-control"
+                  max={new Date().toISOString().split('T')[0]}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Turma*</label>
+                <select
+                  name="turmaId"
+                  value={formData.turmaId}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                >
+                  <option value="">Selecione a turma</option>
+                  {turmas.map(turma => (
+                    <option key={turma.id} value={turma.id}>
+                      {turma.nome} - {turma.escolaNome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-footer">
+              {currentAluno && (
+                <button 
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(currentAluno.id)}
+                >
+                  Excluir Aluno
+                </button>
+              )}
+              <div className="form-footer-right">
+                <button 
+                  type="button" 
+                  className="btn btn-outline"
+                  onClick={resetForm}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                >
+                  {currentAluno ? 'Atualizar' : 'Salvar'}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Lista de alunos cadastrados */}
+      <div className="section">
         <h2 className="section-title">Alunos Cadastrados</h2>
         
         {alunos.length === 0 ? (
-          <p className="text-gray-500">Nenhum aluno cadastrado ainda.</p>
+          <div className="empty-state">
+            <p>Nenhum aluno cadastrado ainda.</p>
+            <button 
+              className="btn btn-primary"
+              onClick={() => setShowForm(true)}
+            >
+              Adicionar Aluno
+            </button>
+          </div>
         ) : (
           <div className="table-responsive">
-            <table className="students-table">
+            <table className="table">
               <thead>
                 <tr>
                   <th>Nome</th>
@@ -249,17 +253,25 @@ const Students = () => {
                     <td>{new Date(aluno.nascimento).toLocaleDateString('pt-BR')}</td>
                     <td>{aluno.turmaNome}</td>
                     <td>
-                      <div className="item-actions">
+                      <div className="table-actions">
                         <button
                           onClick={() => handleEdit(aluno)}
-                          className="btn-form btn-edit btn-sm"
+                          className="btn-action btn-edit"
                         >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" strokeWidth="2"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" strokeWidth="2"/>
+                          </svg>
                           Editar
                         </button>
                         <button
                           onClick={() => handleDelete(aluno.id)}
-                          className="btn-form btn-danger btn-sm"
+                          className="btn-action btn-delete"
                         >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 6h18" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" strokeWidth="2"/>
+                          </svg>
                           Excluir
                         </button>
                       </div>
