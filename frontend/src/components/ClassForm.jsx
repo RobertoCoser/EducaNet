@@ -1,5 +1,7 @@
-const StudentForm = ({ 
-  turmas, 
+import { useForm } from 'react-hook-form';
+
+const ClassForm = ({ 
+  escolas, 
   initialData, 
   onSubmit, 
   onDelete, 
@@ -13,42 +15,29 @@ const StudentForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form-container">
       <div className="form-group">
-        <label>Nome Completo*</label>
-        <input
+        <label>Nome da Turma*</label>
+        <input 
           {...register('nome', { required: 'Campo obrigatório' })}
         />
       </div>
 
       <div className="form-group">
-        <label>Data de Nascimento*</label>
+        <label>Ano/Série*</label>
         <input
-          type="date"
-          {...register('nascimento', { required: 'Campo obrigatório' })}
+          type="number"
+          {...register('ano', { required: 'Campo obrigatório' })}
         />
       </div>
 
       <div className="form-group">
-        <label>CPF*</label>
-        <input
-          {...register('cpf', { 
-            required: 'Campo obrigatório',
-            pattern: {
-              value: /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/,
-              message: 'Formato inválido (XXX.XXX.XXX-XX)'
-            }
-          })}
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Turma*</label>
+        <label>Escola*</label>
         <select
-          {...register('turmaId', { required: 'Selecione uma turma' })}
+          {...register('escolaId', { required: 'Selecione uma escola' })}
         >
-          <option value="">Selecione uma turma...</option>
-          {turmas.map(turma => (
-            <option key={turma.id} value={turma.id}>
-              {turma.nome} - {turma.escolaNome}
+          <option value="">Selecione uma escola</option>
+          {escolas.map(escola => (
+            <option key={escola.id} value={escola.id}>
+              {escola.name}
             </option>
           ))}
         </select>
@@ -61,7 +50,7 @@ const StudentForm = ({
             className="btn-form btn-danger"
             onClick={onDelete}
           >
-            Excluir Aluno
+            Excluir Turma
           </button>
         )}
         
@@ -80,9 +69,11 @@ const StudentForm = ({
           type="submit" 
           className="btn-form btn-form-primary"
         >
-          {isEditing ? 'Atualizar Aluno' : 'Matricular Aluno'}
+          {isEditing ? 'Atualizar Turma' : 'Cadastrar Turma'}
         </button>
       </div>
     </form>
   );
 };
+
+export default ClassForm;

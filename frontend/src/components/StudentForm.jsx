@@ -1,14 +1,5 @@
-const StudentForm = ({ 
-  turmas, 
-  initialData, 
-  onSubmit, 
-  onDelete, 
-  onCancel,
-  isEditing = false 
-}) => {
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: initialData || {}
-  });
+const StudentForm = ({ turmas, onSubmit }) => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form-container">
@@ -16,7 +7,9 @@ const StudentForm = ({
         <label>Nome Completo*</label>
         <input
           {...register('nome', { required: 'Campo obrigatório' })}
+          placeholder="Ex: João da Silva"
         />
+        {errors.nome && <span className="error">{errors.nome.message}</span>}
       </div>
 
       <div className="form-group">
@@ -25,6 +18,7 @@ const StudentForm = ({
           type="date"
           {...register('nascimento', { required: 'Campo obrigatório' })}
         />
+        {errors.nascimento && <span className="error">{errors.nascimento.message}</span>}
       </div>
 
       <div className="form-group">
@@ -37,7 +31,9 @@ const StudentForm = ({
               message: 'Formato inválido (XXX.XXX.XXX-XX)'
             }
           })}
+          placeholder="000.000.000-00"
         />
+        {errors.cpf && <span className="error">{errors.cpf.message}</span>}
       </div>
 
       <div className="form-group">
@@ -52,35 +48,12 @@ const StudentForm = ({
             </option>
           ))}
         </select>
+        {errors.turmaId && <span className="error">{errors.turmaId.message}</span>}
       </div>
 
-      <div className="form-actions">
-        {isEditing && (
-          <button 
-            type="button" 
-            className="btn-form btn-danger"
-            onClick={onDelete}
-          >
-            Excluir Aluno
-          </button>
-        )}
-        
-        <button 
-          type="button" 
-          className="btn-form btn-form-secondary"
-          onClick={() => {
-            reset();
-            onCancel?.();
-          }}
-        >
-          Cancelar
-        </button>
-        
-        <button 
-          type="submit" 
-          className="btn-form btn-form-primary"
-        >
-          {isEditing ? 'Atualizar Aluno' : 'Matricular Aluno'}
+      <div className="btn-form-group">
+        <button type="submit" className="btn-form btn-form-primary">
+          Matricular Aluno
         </button>
       </div>
     </form>
