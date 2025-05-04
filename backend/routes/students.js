@@ -8,10 +8,10 @@ router.get('/', studentsController.getAllStudents);
 // Rota para criar um novo aluno
 router.post('/', studentsController.createStudent);
 
-// Rota para atualizar um aluno
+// Rota para atualizar um aluno pelo ID
 router.put('/:id', studentsController.updateStudent);
 
-// Rota para excluir um aluno
+// Rota para excluir um aluno pelo ID
 router.delete('/:id', studentsController.deleteStudent);
 
 module.exports = router;

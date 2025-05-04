@@ -1,59 +1,136 @@
-const StudentForm = ({ turmas, onSubmit }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+import React, { useState, useEffect } from 'react';
+import api from '../api'; // Instância do Axios
+
+const StudentForm = ({ currentStudent, onClose, onSave }) => {
+  const [formData, setFormData] = useState({
+    nome: '',
+    cpf: '',
+    dataNascimento: '',
+    turmaId: '',
+  });
+
+  const [classes, setClasses] = useState([]); // Para armazenar as turmas disponíveis
+
+  useEffect(() => {
+    // Carrega as turmas disponíveis para o dropdown
+    const fetchClasses = async () => {
+      try {
+        const response = await api.get('/classes'); // Endpoint que retorna as turmas
+        setClasses(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar turmas:', error);
+      }
+    };
+
+    fetchClasses();
+
+    if (currentStudent) {
+      setFormData({
+        nome: currentStudent.nome,
+        cpf: currentStudent.cpf,
+        dataNascimento: currentStudent.dataNascimento,
+        turmaId: currentStudent.turmaId,
+      });
+    }
+  }, [currentStudent]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (currentStudent) {
+        await api.put(`/students/${currentStudent._id}`, formData);
+      } else {
+        await api.post('/students', formData);
+      }
+      onSave();
+      onClose();
+    } catch (error) {
+      console.error('Erro ao salvar aluno:', error);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="form-container">
-      <div className="form-group">
-        <label>Nome Completo*</label>
-        <input
-          {...register('nome', { required: 'Campo obrigatório' })}
-          placeholder="Ex: João da Silva"
-        />
-        {errors.nome && <span className="error">{errors.nome.message}</span>}
-      </div>
+    <form onSubmit={handleSubmit}>
+      <div className="form-grid">
+        {/* Nome do Aluno */}
+        <div className="form-group">
+          <label className="form-label">Nome do Aluno*</label>
+          <input
+            type="text"
+            name="nome"
+            value={formData.nome}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label>Data de Nascimento*</label>
-        <input
-          type="date"
-          {...register('nascimento', { required: 'Campo obrigatório' })}
-        />
-        {errors.nascimento && <span className="error">{errors.nascimento.message}</span>}
-      </div>
+        {/* CPF */}
+        <div className="form-group">
+          <label className="form-label">CPF*</label>
+          <input
+            type="text"
+            name="cpf"
+            value={formData.cpf}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label>CPF*</label>
-        <input
-          {...register('cpf', { 
-            required: 'Campo obrigatório',
-            pattern: {
-              value: /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/,
-              message: 'Formato inválido (XXX.XXX.XXX-XX)'
-            }
-          })}
-          placeholder="000.000.000-00"
-        />
-        {errors.cpf && <span className="error">{errors.cpf.message}</span>}
-      </div>
+        {/* Data de Nascimento */}
+        <div className="form-group">
+          <label className="form-label">Data de Nascimento*</label>
+          <input
+            type="date"
+            name="dataNascimento"
+            value={formData.dataNascimento}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label>Turma*</label>
-        <select
-          {...register('turmaId', { required: 'Selecione uma turma' })}
-        >
-          <option value="">Selecione uma turma...</option>
-          {turmas.map(turma => (
-            <option key={turma.id} value={turma.id}>
-              {turma.nome} - {turma.escolaNome}
+        {/* Turma */}
+        <div className="form-group">
+          <label className="form-label">Turma*</label>
+          <select
+            name="turmaId"
+            value={formData.turmaId}
+            onChange={handleChange}
+            className="form-control"
+            required
+          >
+            <option value="" disabled>
+              Selecione uma turma
             </option>
-          ))}
-        </select>
-        {errors.turmaId && <span className="error">{errors.turmaId.message}</span>}
+            {classes.map((turma) => (
+              <option key={turma._id} value={turma._id}>
+                {turma.nome}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div className="btn-form-group">
-        <button type="submit" className="btn-form btn-form-primary">
-          Matricular Aluno
+      <div className="form-footer">
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={onClose}
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          className="btn btn-primary"
+        >
+          {currentStudent ? 'Atualizar' : 'Salvar'}
         </button>
       </div>
     </form>

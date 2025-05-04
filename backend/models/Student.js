@@ -5,8 +5,13 @@ const StudentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  idade: {
-    type: Number,
+  cpf: {
+    type: String,
+    required: true,
+    unique: true, // CPF deve ser único
+  },
+  dataNascimento: {
+    type: Date,
     required: true,
   },
   turmaId: {

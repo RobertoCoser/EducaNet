@@ -14,7 +14,7 @@ exports.getAllStudents = async (req, res) => {
 // Cria um novo aluno
 exports.createStudent = async (req, res) => {
   try {
-    const { nome, idade, turmaId } = req.body;
+    const { nome, cpf, dataNascimento, turmaId } = req.body;
 
     // Verifica se a turma existe
     const turma = await Class.findById(turmaId);
@@ -22,7 +22,13 @@ exports.createStudent = async (req, res) => {
       return res.status(404).json({ message: 'Turma não encontrada' });
     }
 
-    const newStudent = await Student.create({ nome, idade, turmaId });
+    // Verifica se o CPF já está cadastrado
+    const existingStudent = await Student.findOne({ cpf });
+    if (existingStudent) {
+      return res.status(400).json({ message: 'CPF já cadastrado' });
+    }
+
+    const newStudent = await Student.create({ nome, cpf, dataNascimento, turmaId });
     res.status(201).json(newStudent);
   } catch (error) {
     res.status(500).json({ message: 'Erro ao criar aluno', error });
@@ -33,11 +39,27 @@ exports.createStudent = async (req, res) => {
 exports.updateStudent = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nome, idade, turmaId } = req.body;
+    const { nome, cpf, dataNascimento, turmaId } = req.body;
+
+    // Verifica se a turma existe
+    if (turmaId) {
+      const turma = await Class.findById(turmaId);
+      if (!turma) {
+        return res.status(404).json({ message: 'Turma não encontrada' });
+      }
+    }
+
+    // Verifica se o CPF já está cadastrado em outro aluno
+    if (cpf) {
+      const existingStudent = await Student.findOne({ cpf, _id: { $ne: id } });
+      if (existingStudent) {
+        return res.status(400).json({ message: 'CPF já cadastrado' });
+      }
+    }
 
     const updatedStudent = await Student.findByIdAndUpdate(
       id,
-      { nome, idade, turmaId },
+      { nome, cpf, dataNascimento, turmaId },
       { new: true }
     );
     if (!updatedStudent) {
