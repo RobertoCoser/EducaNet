@@ -4,10 +4,12 @@ const Class = require('../models/Class');
 // Lista todos os alunos
 exports.getAllStudents = async (req, res) => {
   try {
-    const students = await Student.find().populate('turmaId', 'nome'); // Popula o campo turmaId com o nome da turma
+    // Popula o campo turmaId com o nome da turma
+    const students = await Student.find().populate('turmaId', 'nome');
     res.status(200).json(students);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao buscar alunos', error });
+    console.error('Erro ao buscar alunos:', error); // Log para depuração
+    res.status(500).json({ message: 'Erro ao buscar alunos', error: error.message });
   }
 };
 
@@ -31,7 +33,8 @@ exports.createStudent = async (req, res) => {
     const newStudent = await Student.create({ nome, cpf, dataNascimento, turmaId });
     res.status(201).json(newStudent);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao criar aluno', error });
+    console.error('Erro ao criar aluno:', error);
+    res.status(500).json({ message: 'Erro ao criar aluno', error: error.message });
   }
 };
 
@@ -68,7 +71,8 @@ exports.updateStudent = async (req, res) => {
 
     res.status(200).json(updatedStudent);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao atualizar aluno', error });
+    console.error('Erro ao atualizar aluno:', error);
+    res.status(500).json({ message: 'Erro ao atualizar aluno', error: error.message });
   }
 };
 
@@ -84,6 +88,7 @@ exports.deleteStudent = async (req, res) => {
 
     res.status(200).json({ message: 'Aluno excluído com sucesso' });
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao excluir aluno', error });
+    console.error('Erro ao excluir aluno:', error);
+    res.status(500).json({ message: 'Erro ao excluir aluno', error: error.message });
   }
 };

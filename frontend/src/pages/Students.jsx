@@ -11,7 +11,7 @@ const Students = () => {
   const fetchStudents = async () => {
     try {
       const response = await api.get('/students');
-      setStudents(response.data);
+      setStudents(response.data); // Atualiza o estado com os alunos retornados
     } catch (error) {
       console.error('Erro ao buscar alunos:', error);
     }
@@ -91,10 +91,11 @@ const Students = () => {
             {students.map(student => (
               <div key={student._id} className="card student-card">
                 <div className="card-content">
-                  <h3>{student.name}</h3>
+                  <h3>{student.nome}</h3> {/* Exibe o nome do aluno */}
                   <div className="card-details">
-                    <p><span className="detail-label">Idade:</span> {student.age}</p>
-                    <p><span className="detail-label">Turma:</span> {student.className}</p>
+                    <p><span className="detail-label">CPF:</span> {student.cpf}</p>
+                    <p><span className="detail-label">Data de Nascimento:</span> {student.dataNascimento}</p>
+                    <p><span className="detail-label">Turma:</span> {student.turmaId?.nome || 'N/A'}</p> {/* Exibe o nome da turma */}
                   </div>
                 </div>
                 <div className="card-actions">
@@ -103,10 +104,6 @@ const Students = () => {
                     className="btn-action btn-edit"
                     aria-label="Editar"
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" strokeWidth="2"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" strokeWidth="2"/>
-                    </svg>
                     Editar
                   </button>
                   <button
@@ -114,10 +111,6 @@ const Students = () => {
                     className="btn-action btn-delete"
                     aria-label="Excluir"
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path d="M3 6h18" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" strokeWidth="2"/>
-                    </svg>
                     Excluir
                   </button>
                 </div>

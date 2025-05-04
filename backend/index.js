@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const schoolRoutes = require('./routes/schools');
 const classRoutes = require('./routes/classes');
@@ -6,6 +7,9 @@ const studentRoutes = require('./routes/students');
 
 const app = express();
 const PORT = 3000;
+
+// Middleware para habilitar CORS
+app.use(cors());
 
 // Middleware para JSON
 app.use(express.json());
