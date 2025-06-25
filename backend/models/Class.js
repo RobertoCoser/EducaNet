@@ -1,21 +1,26 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../database");
+const School = require("./School");
 
-const ClassSchema = new mongoose.Schema({
-  nome: {
-    type: String,
-    required: true,
+const Class = sequelize.define(
+  "Class",
+  {
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    ano: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
-  ano: {
-    type: Number,
-    required: true,
-  },
-  escolaId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'School', // Relaciona com o modelo de Escolas
-    required: true,
-  },
-}, {
-  timestamps: true, // Adiciona campos createdAt e updatedAt automaticamente
-});
+  {
+    timestamps: true,
+    tableName: "classes",
+  }
+);
 
-module.exports = mongoose.model('Class', ClassSchema);
+Class.belongsTo(School, { foreignKey: "escolaId", as: "escola" });
+School.hasMany(Class, { foreignKey: "escolaId", as: "turmas" });
+
+module.exports = Class;

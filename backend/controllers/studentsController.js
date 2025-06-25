@@ -1,15 +1,19 @@
-const Student = require('../models/Student');
-const Class = require('../models/Class');
+const Student = require("../models/Student");
+const Class = require("../models/Class");
+const { Op } = require("sequelize");
 
 // Lista todos os alunos
 exports.getAllStudents = async (req, res) => {
   try {
-    // Popula o campo turmaId com o nome da turma
-    const students = await Student.find().populate('turmaId', 'nome');
+    const students = await Student.findAll({
+      include: [{ model: Class, as: "turma", attributes: ["nome"] }],
+    });
     res.status(200).json(students);
   } catch (error) {
-    console.error('Erro ao buscar alunos:', error); // Log para depuração
-    res.status(500).json({ message: 'Erro ao buscar alunos', error: error.message });
+    console.error("Erro ao buscar alunos:", error);
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar alunos", error: error.message });
   }
 };
 
@@ -19,22 +23,29 @@ exports.createStudent = async (req, res) => {
     const { nome, cpf, dataNascimento, turmaId } = req.body;
 
     // Verifica se a turma existe
-    const turma = await Class.findById(turmaId);
+    const turma = await Class.findByPk(turmaId);
     if (!turma) {
-      return res.status(404).json({ message: 'Turma não encontrada' });
+      return res.status(404).json({ message: "Turma não encontrada" });
     }
 
     // Verifica se o CPF já está cadastrado
-    const existingStudent = await Student.findOne({ cpf });
+    const existingStudent = await Student.findOne({ where: { cpf } });
     if (existingStudent) {
-      return res.status(400).json({ message: 'CPF já cadastrado' });
+      return res.status(400).json({ message: "CPF já cadastrado" });
     }
 
-    const newStudent = await Student.create({ nome, cpf, dataNascimento, turmaId });
+    const newStudent = await Student.create({
+      nome,
+      cpf,
+      dataNascimento,
+      turmaId,
+    });
     res.status(201).json(newStudent);
   } catch (error) {
-    console.error('Erro ao criar aluno:', error);
-    res.status(500).json({ message: 'Erro ao criar aluno', error: error.message });
+    console.error("Erro ao criar aluno:", error);
+    res
+      .status(500)
+      .json({ message: "Erro ao criar aluno", error: error.message });
   }
 };
 
@@ -46,33 +57,39 @@ exports.updateStudent = async (req, res) => {
 
     // Verifica se a turma existe
     if (turmaId) {
-      const turma = await Class.findById(turmaId);
+      const turma = await Class.findByPk(turmaId);
       if (!turma) {
-        return res.status(404).json({ message: 'Turma não encontrada' });
+        return res.status(404).json({ message: "Turma não encontrada" });
       }
     }
 
     // Verifica se o CPF já está cadastrado em outro aluno
     if (cpf) {
-      const existingStudent = await Student.findOne({ cpf, _id: { $ne: id } });
+      const existingStudent = await Student.findOne({
+        where: {
+          cpf,
+          id: { [Op.ne]: id },
+        },
+      });
       if (existingStudent) {
-        return res.status(400).json({ message: 'CPF já cadastrado' });
+        return res.status(400).json({ message: "CPF já cadastrado" });
       }
     }
 
-    const updatedStudent = await Student.findByIdAndUpdate(
-      id,
+    const [updated] = await Student.update(
       { nome, cpf, dataNascimento, turmaId },
-      { new: true }
+      { where: { id } }
     );
-    if (!updatedStudent) {
-      return res.status(404).json({ message: 'Aluno não encontrado' });
+    if (!updated) {
+      return res.status(404).json({ message: "Aluno não encontrado" });
     }
-
+    const updatedStudent = await Student.findByPk(id);
     res.status(200).json(updatedStudent);
   } catch (error) {
-    console.error('Erro ao atualizar aluno:', error);
-    res.status(500).json({ message: 'Erro ao atualizar aluno', error: error.message });
+    console.error("Erro ao atualizar aluno:", error);
+    res
+      .status(500)
+      .json({ message: "Erro ao atualizar aluno", error: error.message });
   }
 };
 
@@ -80,15 +97,15 @@ exports.updateStudent = async (req, res) => {
 exports.deleteStudent = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const deletedStudent = await Student.findByIdAndDelete(id);
-    if (!deletedStudent) {
-      return res.status(404).json({ message: 'Aluno não encontrado' });
+    const deleted = await Student.destroy({ where: { id } });
+    if (!deleted) {
+      return res.status(404).json({ message: "Aluno não encontrado" });
     }
-
-    res.status(200).json({ message: 'Aluno excluído com sucesso' });
+    res.status(200).json({ message: "Aluno excluído com sucesso" });
   } catch (error) {
-    console.error('Erro ao excluir aluno:', error);
-    res.status(500).json({ message: 'Erro ao excluir aluno', error: error.message });
+    console.error("Erro ao excluir aluno:", error);
+    res
+      .status(500)
+      .json({ message: "Erro ao excluir aluno", error: error.message });
   }
 };

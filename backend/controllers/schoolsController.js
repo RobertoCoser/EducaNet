@@ -1,12 +1,12 @@
-const School = require('../models/School');
+const School = require("../models/School");
 
 // Lista todas as escolas
 exports.getAllSchools = async (req, res) => {
   try {
-    const schools = await School.find();
+    const schools = await School.findAll();
     res.status(200).json(schools);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao buscar escolas', error });
+    res.status(500).json({ message: "Erro ao buscar escolas", error });
   }
 };
 
@@ -17,7 +17,7 @@ exports.createSchool = async (req, res) => {
     const newSchool = await School.create({ name, address });
     res.status(201).json(newSchool);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao criar escola', error });
+    res.status(500).json({ message: "Erro ao criar escola", error });
   }
 };
 
@@ -26,13 +26,14 @@ exports.updateSchool = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, address } = req.body;
-    const updatedSchool = await School.findByIdAndUpdate(id, { name, address }, { new: true });
-    if (!updatedSchool) {
-      return res.status(404).json({ message: 'Escola não encontrada' });
+    const [updated] = await School.update({ name, address }, { where: { id } });
+    if (!updated) {
+      return res.status(404).json({ message: "Escola não encontrada" });
     }
+    const updatedSchool = await School.findByPk(id);
     res.status(200).json(updatedSchool);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao atualizar escola', error });
+    res.status(500).json({ message: "Erro ao atualizar escola", error });
   }
 };
 
@@ -40,12 +41,12 @@ exports.updateSchool = async (req, res) => {
 exports.deleteSchool = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedSchool = await School.findByIdAndDelete(id);
-    if (!deletedSchool) {
-      return res.status(404).json({ message: 'Escola não encontrada' });
+    const deleted = await School.destroy({ where: { id } });
+    if (!deleted) {
+      return res.status(404).json({ message: "Escola não encontrada" });
     }
-    res.status(200).json({ message: 'Escola excluída com sucesso' });
+    res.status(200).json({ message: "Escola excluída com sucesso" });
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao excluir escola', error });
+    res.status(500).json({ message: "Erro ao excluir escola", error });
   }
 };

@@ -1,26 +1,31 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../database");
+const Class = require("./Class");
 
-const StudentSchema = new mongoose.Schema({
-  nome: {
-    type: String,
-    required: true,
+const Student = sequelize.define(
+  "Student",
+  {
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    cpf: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    dataNascimento: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+    },
   },
-  cpf: {
-    type: String,
-    required: true,
-    unique: true, // CPF deve ser único
-  },
-  dataNascimento: {
-    type: Date,
-    required: true,
-  },
-  turmaId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Class', // Relaciona com o modelo de Turmas
-    required: true,
-  },
-}, {
-  timestamps: true, // Adiciona campos createdAt e updatedAt automaticamente
-});
+  {
+    timestamps: true,
+    tableName: "students",
+  }
+);
 
-module.exports = mongoose.model('Student', StudentSchema);
+Student.belongsTo(Class, { foreignKey: "turmaId", as: "turma" });
+Class.hasMany(Student, { foreignKey: "turmaId", as: "alunos" });
+
+module.exports = Student;
