@@ -41,7 +41,7 @@ const ClassForm = ({ currentClass, onClose, onSave }) => {
     e.preventDefault();
     try {
       if (currentClass) {
-        await api.put(`/classes/${currentClass._id}`, formData);
+        await api.put(`/classes/${currentClass.id}`, formData);
       } else {
         await api.post('/classes', formData);
       }
@@ -90,7 +90,7 @@ const ClassForm = ({ currentClass, onClose, onSave }) => {
           >
             <option value="" disabled>Selecione uma escola</option>
             {schools.map(school => (
-              <option key={school._id} value={school._id}>
+              <option key={school.id} value={school.id}>
                 {school.name}
               </option>
             ))}

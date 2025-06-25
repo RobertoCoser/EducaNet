@@ -25,7 +25,7 @@ const SchoolForm = ({ currentSchool, onClose, onSave }) => {
     e.preventDefault();
     try {
       if (currentSchool) {
-        await api.put(`/schools/${currentSchool._id}`, formData);
+        await api.put(`/schools/${currentSchool.id}`, formData);
       } else {
         await api.post('/schools', formData);
       }

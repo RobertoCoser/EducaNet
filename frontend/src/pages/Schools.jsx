@@ -89,7 +89,7 @@ const Schools = () => {
         ) : (
           <div className="cards-grid">
             {schools.map(school => (
-              <div key={school._id} className="card school-card">
+              <div key={school.id} className="card school-card">
                 <div className="card-content">
                   <h3>{school.name}</h3>
                   <div className="card-details">
@@ -105,7 +105,7 @@ const Schools = () => {
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(school._id)}
+                    onClick={() => handleDelete(school.id)}
                     className="btn-action btn-delete"
                     aria-label="Excluir"
                   >

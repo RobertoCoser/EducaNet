@@ -43,7 +43,7 @@ const StudentForm = ({ currentStudent, onClose, onSave }) => {
     e.preventDefault();
     try {
       if (currentStudent) {
-        await api.put(`/students/${currentStudent._id}`, formData);
+        await api.put(`/students/${currentStudent.id}`, formData);
       } else {
         await api.post('/students', formData);
       }
@@ -110,7 +110,7 @@ const StudentForm = ({ currentStudent, onClose, onSave }) => {
               Selecione uma turma
             </option>
             {classes.map((turma) => (
-              <option key={turma._id} value={turma._id}>
+              <option key={turma.id} value={turma.id}>
                 {turma.nome}
               </option>
             ))}

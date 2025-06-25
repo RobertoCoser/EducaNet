@@ -89,7 +89,7 @@ const Classes = () => {
         ) : (
           <div className="cards-grid">
             {classes.map(classItem => (
-              <div key={classItem._id} className="card class-card">
+              <div key={classItem.id} className="card class-card">
                 <div className="card-content">
                   <h3>{classItem.nome}</h3> {/* Altere "name" para "nome" */}
                   <div className="card-details">
@@ -113,7 +113,7 @@ const Classes = () => {
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(classItem._id)}
+                    onClick={() => handleDelete(classItem.id)}
                     className="btn-action btn-delete"
                     aria-label="Excluir"
                   >
