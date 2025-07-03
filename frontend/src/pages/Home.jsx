@@ -10,7 +10,7 @@ const Home = () => {
 
       <section className="cards-wrapper">
         <div className="cards-grid">
-          <Link to="/escolas" className="card-expanded">
+          <Link to="/schools" className="card-expanded">
             <div className="icon-wrapper">
               <span className="icon">🏫</span>
             </div>
@@ -24,7 +24,7 @@ const Home = () => {
             </span>
           </Link>
 
-          <Link to="/turmas" className="card-expanded">
+          <Link to="/classes" className="card-expanded">
             <div className="icon-wrapper">
               <span className="icon">📚</span>
             </div>
@@ -38,7 +38,7 @@ const Home = () => {
             </span>
           </Link>
 
-          <Link to="/alunos" className="card-expanded">
+          <Link to="/students" className="card-expanded">
             <div className="icon-wrapper">
               <span className="icon">👩‍🎓</span>
             </div>

@@ -1,10 +1,16 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (
@@ -27,17 +33,17 @@ const Navbar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/escolas" className={`nav-link ${isActive('/escolas')}`}>
+          <Link to="/schools" className={`nav-link ${isActive('/schools')}`}>
             Escolas
           </Link>
         </li>
         <li>
-          <Link to="/turmas" className={`nav-link ${isActive('/turmas')}`}>
+          <Link to="/classes" className={`nav-link ${isActive('/classes')}`}>
             Turmas
           </Link>
         </li>
         <li>
-          <Link to="/alunos" className={`nav-link ${isActive('/alunos')}`}>
+          <Link to="/students" className={`nav-link ${isActive('/students')}`}>
             Alunos
           </Link>
         </li>
@@ -45,6 +51,30 @@ const Navbar = () => {
 
       {/* Links secundários (direita) */}
       <ul className="nav-links nav-right">
+        <li>
+          <button
+            onClick={handleLogout}
+            className="nav-link nav-logout"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4em'
+            }}
+            title="Sair"
+          >
+            {/* Ícone de logout */}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Sair
+          </button>
+        </li>
         <li>
           <Link to="/sobre" className={`nav-link ${isActive('/sobre')}`}>
             Sobre

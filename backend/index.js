@@ -4,6 +4,7 @@ const sequelize = require("./database");
 const schoolRoutes = require("./routes/schools");
 const classRoutes = require("./routes/classes");
 const studentRoutes = require("./routes/students");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 const PORT = 3000;
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/api/schools", schoolRoutes);
 app.use("/api/classes", classRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/auth", authRoutes);
 
 sequelize
   .sync({ alter: true })
