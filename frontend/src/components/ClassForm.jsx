@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api/index'; // Instância do Axios
+import api from '../api/index'; 
 
 const ClassForm = ({ currentClass, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    nome: '', // Altere para "nome" para alinhar com o backend
-    ano: '', // Altere para "ano" para alinhar com o backend
-    escolaId: '' // Campo para armazenar a escola selecionada
+    nome: '', 
+    ano: '',
+    escolaId: '' 
   });
 
-  const [schools, setSchools] = useState([]); // Lista de escolas disponíveis
+  const [schools, setSchools] = useState([]); 
 
   // Busca as escolas do backend
   const fetchSchools = async () => {
     try {
-      const response = await api.get('/schools'); // Endpoint para buscar escolas
+      const response = await api.get('/schools'); 
       setSchools(response.data);
     } catch (error) {
       console.error('Erro ao buscar escolas:', error);
@@ -25,8 +25,8 @@ const ClassForm = ({ currentClass, onClose, onSave }) => {
 
     if (currentClass) {
       setFormData({
-        nome: currentClass.nome, // Altere para "nome"
-        ano: currentClass.ano,   // Altere para "ano"
+        nome: currentClass.nome, 
+        ano: currentClass.ano,   
         escolaId: currentClass.escolaId || ''
       });
     }
@@ -45,8 +45,8 @@ const ClassForm = ({ currentClass, onClose, onSave }) => {
       } else {
         await api.post('/classes', formData);
       }
-      onSave(); // Atualiza a lista de turmas
-      onClose(); // Fecha o formulário
+      onSave(); 
+      onClose(); 
     } catch (error) {
       console.error('Erro ao salvar turma:', error);
     }
@@ -59,8 +59,8 @@ const ClassForm = ({ currentClass, onClose, onSave }) => {
           <label className="form-label">Nome da Turma*</label>
           <input
             type="text"
-            name="nome" // Altere para "nome"
-            value={formData.nome} // Altere para "nome"
+            name="nome" 
+            value={formData.nome} 
             onChange={handleChange}
             className="form-control"
             required
@@ -71,8 +71,8 @@ const ClassForm = ({ currentClass, onClose, onSave }) => {
           <label className="form-label">Ano*</label>
           <input
             type="number"
-            name="ano" // Altere para "ano"
-            value={formData.ano} // Altere para "ano"
+            name="ano" 
+            value={formData.ano} 
             onChange={handleChange}
             className="form-control"
             required
