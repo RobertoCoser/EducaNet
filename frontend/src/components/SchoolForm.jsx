@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api'; // Instância do Axios
+import api from '../api/index'; // Instância do Axios
 
 const SchoolForm = ({ currentSchool, onClose, onSave }) => {
   const [formData, setFormData] = useState({
